@@ -2,7 +2,7 @@
 
 **Warning**: This library was specifically written for [elasticvue](https://github.com/cars10/elasticvue) - it might not fit your usecase.
 
-It provides a very simple (and very incomplete) wrapper around [reqwest](https://github.com/seanmonstar/reqwest) that mimics the javascript fetch API.
+It provides a very simple (and very incomplete) wrapper for [reqwest](https://github.com/seanmonstar/reqwest) that mimics the javascript fetch API.
 
 
 ## Usecase

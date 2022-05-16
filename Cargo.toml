@@ -2,8 +2,15 @@
 name = "fetch_reqwest"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+readme = "README.md"
+keywords = ["fetch", "request", "reqwest"]
+homepage = "https://github.com/cars10/fetch_reqwest"
+repository = "https://github.com/cars10/fetch_reqwest"
+documentation = "https://docs.rs/fetch_reqwest"
+authors = ["Carsten König <carstenkoenig92@gmail.com>"]
+categories = ["web-programming::http-client"]
+description = "very simple (and very incomplete) wrapper around for reqwest that mimics the javascript fetch API"
 
 [dependencies]
 multimap = "0.8.3"
