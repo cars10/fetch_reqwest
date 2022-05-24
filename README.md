@@ -32,6 +32,7 @@ const options = {
 ```javascript
 response.ok // true || false
 response.status // 200, 500, etc
+response.status_text // OK, Created, etc
 response.headers // response.headers.get('Authorization')
 response.text().then(t => console.log(t)) // response body as str, e.g. "foo bar"
 response.json().then(j => console.log(j)) // response body as json, e.g. {foo: "bar"}
@@ -97,6 +98,7 @@ class FetchReqwestResponse {
     this.headers = new FetchReqwestResponseHeaders(response.headers)
     this.ok = response.ok
     this.status = response.status
+    this.statusText = response.status_text
     this.body = response.text
   }
 
