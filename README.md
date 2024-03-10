@@ -124,3 +124,15 @@ fetchReqwest("https://example.com", {
     method: "GET"
 })
 ```
+
+
+### Logging
+
+`fetch_reqwest` uses the `log` crate to log requests. Setup your logging facade (e.g. `env_logger`) to see the logs.
+
+| Data                                 | Level | Example                                          |
+|--------------------------------------|-------|--------------------------------------------------|
+| request sent                         | INFO  | [42lfbxodoqvz] GET https://localhost:9508/_nodes |
+| response received                    | INFO  | [42lfbxodoqvz] 200 OK                            |
+| response body when request failed    | ERROR | [42lfbxodoqvz] {"some": "json"}                  |
+| response body when request succeeded | DEBUG | [42lfbxodoqvz] {"some": "json"}                  |

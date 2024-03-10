@@ -1,3 +1,4 @@
+use reqwest::header::{InvalidHeaderName, InvalidHeaderValue, ToStrError};
 use serde::{Deserialize, Serialize};
 use std::convert::From;
 
@@ -22,24 +23,24 @@ impl From<reqwest::Error> for Error {
     }
 }
 
-impl From<reqwest::header::InvalidHeaderName> for Error {
-    fn from(e: reqwest::header::InvalidHeaderName) -> Self {
+impl From<InvalidHeaderName> for Error {
+    fn from(e: InvalidHeaderName) -> Self {
         eprintln!("{:?}", e);
 
         Error::ReqwestInvalidHeaderNameError
     }
 }
 
-impl From<reqwest::header::InvalidHeaderValue> for Error {
-    fn from(e: reqwest::header::InvalidHeaderValue) -> Self {
+impl From<InvalidHeaderValue> for Error {
+    fn from(e: InvalidHeaderValue) -> Self {
         eprintln!("{:?}", e);
 
         Error::ReqwestInvalidHeaderValueError
     }
 }
 
-impl From<reqwest::header::ToStrError> for Error {
-    fn from(e: reqwest::header::ToStrError) -> Self {
+impl From<ToStrError> for Error {
+    fn from(e: ToStrError) -> Self {
         eprintln!("{:?}", e);
 
         Error::ReqwestInvalidHeaderValueError

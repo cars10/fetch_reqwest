@@ -1,5 +1,12 @@
+use log::{debug, error, info};
+use reqwest::{
+    header::{HeaderMap, HeaderName},
+    Client,
+};
+
 mod error;
 mod options;
+mod random;
 mod response;
 
 pub use error::Error;
@@ -12,24 +19,42 @@ pub async fn fetch<U>(resource: U, init: Option<FetchOptions>) -> FetchResponseR
 where
     U: reqwest::IntoUrl + std::fmt::Debug,
 {
-    let client_builder = reqwest::Client::builder()
+    let client_builder = Client::builder()
         .danger_accept_invalid_certs(true)
         .use_rustls_tls();
     let client = client_builder.build()?;
-    let some_init = init.unwrap_or_default();
+    let init = init.unwrap_or_default();
 
-    let mut headers = reqwest::header::HeaderMap::new();
-    for (name, value) in &some_init.headers {
-        headers.insert(
-            reqwest::header::HeaderName::from_bytes(name.as_bytes())?,
-            value.parse()?,
-        );
+    let mut headers = HeaderMap::new();
+    for (name, value) in &init.headers {
+        headers.insert(HeaderName::from_bytes(name.as_bytes())?, value.parse()?);
     }
-    let request_builder = client
-        .request(some_init.reqwest_method(), resource)
+    let method = init.reqwest_method();
+    let request = client
+        .request(method, resource)
         .headers(headers)
-        .body(some_init.body.unwrap_or_default());
+        .body(init.body.unwrap_or_default())
+        .build()?;
 
-    let response = request_builder.send().await?;
-    response::FetchResponse::from_response(response).await
+    let req_id = random::random_string(12).to_lowercase();
+
+    info!(
+        "[{req_id}] {method} {url}",
+        method = request.method(),
+        url = request.url().to_string()
+    );
+    let response = client.execute(request).await?;
+    info!("[{req_id}] {status}", status = response.status());
+
+    let fetch_response = FetchResponse::from_response(response).await;
+
+    if let Ok(fetch_response) = &fetch_response {
+        if fetch_response.ok {
+            debug!("[{req_id}] {text}", text = fetch_response.text);
+        } else {
+            error!("[{req_id}] {text}", text = fetch_response.text);
+        }
+    }
+
+    fetch_response
 }

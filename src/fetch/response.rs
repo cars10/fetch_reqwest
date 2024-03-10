@@ -1,4 +1,5 @@
 use multimap::MultiMap;
+use reqwest::Response;
 use serde::Serialize;
 
 #[derive(Clone, Debug, Default, Serialize)]
@@ -11,7 +12,7 @@ pub struct FetchResponse {
 }
 
 impl FetchResponse {
-    pub async fn from_response(response: reqwest::Response) -> Result<Self, super::Error> {
+    pub async fn from_response(response: Response) -> Result<Self, super::Error> {
         let status = response.status();
         let mut headers = MultiMap::new();
         for (key, value) in response.headers() {
