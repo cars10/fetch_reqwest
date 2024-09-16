@@ -13,9 +13,9 @@ categories = ["web-programming::http-client"]
 description = "very simple (and very incomplete) wrapper around for reqwest that mimics the javascript fetch API"
 
 [dependencies]
-log = "0.4.21"
+log = "0.4"
 multimap = "0.10"
-rand = "0.8.5"
-reqwest = {version = "0.11.15", features = ["rustls-tls"], default-features = false}
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0.114"
+rand = "0.8"
+reqwest = {version = "0.12", features = ["rustls-tls"], default-features = false}
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
