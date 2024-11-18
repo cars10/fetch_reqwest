@@ -1,7 +1,7 @@
 use log::{debug, error, info};
 use reqwest::{
     header::{HeaderMap, HeaderName},
-    Client,
+    Client, Proxy,
 };
 
 mod error;
@@ -15,14 +15,25 @@ pub use response::FetchResponse;
 
 pub type FetchResponseResult = Result<FetchResponse, Error>;
 
+fn build_proxy() -> Option<Proxy> {
+    let url = std::env::var("http_proxy")
+        .or_else(|_| std::env::var("https_proxy"))
+        .ok()?;
+    Proxy::https(url).ok()
+}
+
 pub async fn fetch<U>(resource: U, init: Option<FetchOptions>) -> FetchResponseResult
 where
     U: reqwest::IntoUrl + std::fmt::Debug,
 {
-    let client = Client::builder()
+    let mut client_builder = Client::builder()
         .danger_accept_invalid_certs(true)
-        .use_rustls_tls()
-        .build()?;
+        .use_rustls_tls();
+
+    if let Some(proxy) = build_proxy() {
+        client_builder = client_builder.proxy(proxy);
+    }
+    let client = client_builder.build()?;
     let init = init.unwrap_or_default();
 
     let mut headers = HeaderMap::new();
@@ -35,16 +46,11 @@ where
         .headers(headers)
         .body(init.body.unwrap_or_default())
         .build()?;
-    
+
     let req_id = random::random_string(12).to_lowercase();
     let request_url = request.url().to_string();
 
-    info!(
-        "[{}] {} {}",
-        req_id,
-        request.method(),
-        request_url
-    );
+    info!("[{}] {} {}", req_id, request.method(), request_url);
     let response = client.execute(request).await?;
     info!("[{}] {}", req_id, response.status());
 
