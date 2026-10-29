@@ -1,7 +1,7 @@
 use log::{debug, error, info};
 use reqwest::{
     header::{HeaderMap, HeaderName},
-    Client, Proxy,
+    Client, NoProxy, Proxy,
 };
 
 mod error;
@@ -19,7 +19,9 @@ fn build_proxy() -> Option<Proxy> {
     let url = std::env::var("http_proxy")
         .or_else(|_| std::env::var("https_proxy"))
         .ok()?;
-    Proxy::https(url).ok()
+    Proxy::https(url)
+        .ok()
+        .map(|proxy| proxy.no_proxy(NoProxy::from_env()))
 }
 
 pub async fn fetch<U>(resource: U, init: Option<FetchOptions>) -> FetchResponseResult
